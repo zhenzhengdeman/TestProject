@@ -10,7 +10,22 @@
 </head>
 <body>
     <h1>📚 欢迎来到我的书店</h1>
-<form method="POST" style="background: #f9f9f9; padding: 15px; margin-bottom: 20px;">
+    <div style="text-align: right; margin-bottom: 20px;">
+        {% if current_user.is_authenticated %}
+            <span>👋 你好, {{ current_user.username }}</span>
+            <a href="/logout" style="margin-left: 10px;">退出登录</a>
+        {% else %}
+            <a href="/login">管理员登录</a>
+        {% endif %}
+    </div>
+
+    {% if current_user.is_authenticated %}
+        <form method="POST" ...>
+            ... (原本的表单内容) ...
+        </form>
+    {% endif %}
+{% if current_user.is_authenticated %}
+    <form method="POST" style="background: #f9f9f9; padding: 15px; margin-bottom: 20px;">
         <h3>➕ 添加新书</h3>
 
         <label>书名：</label>
@@ -24,14 +39,16 @@
 
         <button type="submit">立即上架</button>
     </form>
-
+{% endif %}
     <hr>
     {% for book in books %}
         <div class="book-item">
             <h3>{{ book.title }}</h3>
             <p>价格: <span class="price">{{ book.price }} 元</span></p>
             <h3>作者： {{ book.author }}</h3>
+            {% if current_user.is_authenticated %}
             <a href="/delete/{{ book.id }}" style="color: red; text-decoration: none;">❌ 删除本书</a>
+            {% endif %}
         </div>
         </div>
     {% endfor %}

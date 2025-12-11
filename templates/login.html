@@ -1,10 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>管理员登录</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;}
+        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
 </head>
 <body>
-$END$
+    <h2 style="text-align: center;">🔐 管理员登录</h2>
+
+    <form method="POST">
+        <label>用户名：</label>
+        <input type="text" name="username" required>
+
+        <label>密码：</label>
+        <input type="password" name="password" required>
+
+        <button type="submit">登录</button>
+    </form>
 </body>
 </html>

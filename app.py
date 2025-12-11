@@ -97,6 +97,38 @@ def delete_book(id):
     # 4. 删完后，回到首页看看结果
     return redirect('/')
 
+
+# 别忘了在最上面确认导入了 redirect 和 url_for (如果没导 url_for 也没事，写字符串也行)
+# 还需要导入 flash (可选，用于显示错误信息，我们先用简单版)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # 如果用户提交了表单 (POST)
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        # 1. 去数据库找这个人
+        user = User.query.filter_by(username=username).first()
+
+        # 2. 验证：用户存在 且 密码正确
+        if user and user.check_password(password):
+            # 3. 发通行证 (关键步骤！)
+            login_user(user)
+            # 登录成功，送回首页
+            return redirect('/')
+        else:
+            # 登录失败
+            return "❌ 登录失败：用户名或密码错误"
+
+    # 如果是平时访问 (GET)，就显示登录网页
+    return render_template('login.html')
+@app.route('/logout')
+def logout():
+    # 收回通行证
+    logout_user()
+    return redirect('/')
+
 # 5. 让 Flask 跑起来，并创建数据库
 if __name__ == '__main__':
     # 这一步非常重要：它会检测有没有 books.db，如果没有，就根据上面的 Class 自动创建！
