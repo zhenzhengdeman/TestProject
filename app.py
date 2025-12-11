@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
 # 1. 初始化 Flask 网站
 app = Flask(__name__)
 
@@ -9,10 +11,33 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///books.db'
 # 关闭一个不必要的追踪功能，省点内存
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+# 1. 设置密钥 (用来给 Cookie 加密的，随便瞎脸滚键盘打一串乱码)
+app.config['SECRET_KEY'] = 'kajsdhf89234jhfsd78t6234'
+# 2. 初始化登录管理工具
+login_manager = LoginManager()
+login_manager.init_app(app)
+# 告诉门卫：如果有人没登录就想硬闯，把他踢到 '/login' 页面去
+login_manager.login_view = 'login'
+# 3. 这是一个回调函数，Flask-Login 需要用它来根据 ID 找到用户
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 # 3. 初始化数据库插件
 db = SQLAlchemy(app)
 
+# UserMixin 帮我们自动处理比如 "用户是否激活"、"用户ID是多少" 这些琐事
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False) # unique=True 表示用户名不能重复
+    password_hash = db.Column(db.String(128)) # 注意：这里存的是哈希值，不是明文密码
+
+    # 这是一个用来设置密码的方法
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    # 这是一个用来验证密码的方法
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 # 4. 定义 "书" 的模型 (这就是 ORM 的核心！)
 # 我们定义一个 Python 类，数据库会自动把它变成一张表
