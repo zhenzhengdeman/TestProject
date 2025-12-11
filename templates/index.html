@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的书店</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .book-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .price { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>📚 欢迎来到我的书店</h1>
+<form method="POST" style="background: #f9f9f9; padding: 15px; margin-bottom: 20px;">
+        <h3>➕ 添加新书</h3>
+
+        <label>书名：</label>
+        <input type="text" name="title" placeholder="请输入书名" required>
+
+        <label>价格：</label>
+        <input type="number" name="price" step="0.01" required>
+
+        <label>作者：</label>
+        <input type="text" name="author" required>
+
+        <button type="submit">立即上架</button>
+    </form>
+
+    <hr>
+    {% for book in books %}
+        <div class="book-item">
+            <h3>{{ book.title }}</h3>
+            <p>价格: <span class="price">{{ book.price }} 元</span></p>
+            <h3>作者： {{ book.author }}</h3>
+            <a href="/delete/{{ book.id }}" style="color: red; text-decoration: none;">❌ 删除本书</a>
+        </div>
+        </div>
+    {% endfor %}
+
+</body>
+</html>
